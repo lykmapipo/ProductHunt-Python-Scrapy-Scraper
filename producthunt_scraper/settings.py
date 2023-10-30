@@ -15,6 +15,7 @@ Scrapy developers, if you add a setting here remember to:
 * add project defined/custom settings last
 
 """
+from importlib import import_module
 from pathlib import Path
 
 from producthunt_scraper.env import env
@@ -84,8 +85,8 @@ DOWNLOAD_DELAY = env("DOWNLOAD_DELAY", 0, int)
 DOWNLOADER_MIDDLEWARES = {
     "scrapy.downloadermiddlewares.useragent.UserAgentMiddleware": None,
     "scrapy.downloadermiddlewares.retry.RetryMiddleware": None,
-    "scrapy_fake_useragent.middleware.RandomUserAgentMiddleware": 400,
-    "scrapy_fake_useragent.middleware.RetryUserAgentMiddleware": 401,
+    "producthunt_scraper.middlewares.RandomUserAgentMiddleware": 500,
+    "producthunt_scraper.middlewares.RetryRandomUserAgentMiddleware": 550,
     # "producthunt_scraper.middlewares.ProducthuntScraperDownloaderMiddleware": 543,
 }
 
@@ -152,14 +153,9 @@ SPIDER_MODULES = ["producthunt_scraper.spiders"]
 # See https://docs.scrapy.org/en/latest/topics/settings.html#user-agent
 USER_AGENT = env(
     "USER_AGENT",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+    f"""Scrapy/{import_module("scrapy").__version__} (+https://scrapy.org)""",
     str,
 )
-FAKEUSERAGENT_PROVIDERS = [
-    "scrapy_fake_useragent.providers.FakeUserAgentProvider",  # this is the first provider we'll try
-    "scrapy_fake_useragent.providers.FakerProvider",  # if FakeUserAgentProvider fails, we'll use faker to generate a user-agent string for us
-    "scrapy_fake_useragent.providers.FixedUserAgentProvider",  # fall back to USER_AGENT value
-]
 
 # Disable Telnet Console (enabled by default)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#telnetconsole-enabled
