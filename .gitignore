@@ -47,7 +47,7 @@ htmlcov/
 .coverage.*
 .cache
 nosetests.xml
-coverage.xml
+coverage.*
 *.cover
 *.py,cover
 .hypothesis/
@@ -162,6 +162,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# Data stuff
-data
-tmp
+
+# Other files and folders
+tmp/
+data/
