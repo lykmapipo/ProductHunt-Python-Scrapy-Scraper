@@ -182,6 +182,3 @@ PRODUCTHUNT_PRODUCT_SORT_FILTERS = [
     "most_followed",
     "most_recent",
 ]
-
-
-print(vars())
