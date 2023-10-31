@@ -1,16 +1,6 @@
 # ProductHunt-Python-Scrapy-Scraper
 
-Python [Scrapy](https://github.com/scrapy/scrapy) spiders that scrapes data from [producthunt.com](https://www.producthunt.com).
-
-These spiders extract the following fields from product pages:
-
-- Product Id
-- Product Slug
-- Product Name
-- Product Tagline
-- Product Description
-- Product Rating
-- etc.
+Python [Scrapy](https://github.com/scrapy/scrapy) spiders that scrapes [products](#product) and [launches](#launch) data from [producthunt.com](https://www.producthunt.com).
 
 ## Requirements
 
@@ -28,6 +18,12 @@ These spiders extract the following fields from product pages:
 pip install -e .
 ```
 
+- To scrape `featured product launches`, run:
+
+```sh
+scrapy crawl featured-product-launches
+```
+
 - To scrape `trending products`, run:
 
 ```sh
@@ -35,16 +31,17 @@ scrapy crawl trending-products
 ```
 
 ## Data Exploration
-The scraped data is saved in [`jsonline`](https://jsonlines.org/) format and may be found at `./data/<spider-name>/date=<scraped-date>`. Where `spider-name` is a name of the spider e.g `trending-products` and `scraped-date` is the date when the spider was runned.
+The scraped data is saved in [`jsonline`](https://jsonlines.org/) format and may be found at `./data/<spider-name>/date=<scraped-date>`. Where `spider-name` is a name of the spider e.g `featured-product-launches` and `scraped-date` is the date when the spider was runned.
 
-Example, for `trending-products` spider runned on `2023-10-24`, then the data may be found at `./data/trending-products/date=2023-10-24`.
+Example, for `featured-product-launches` spider runned on `2023-10-24`, then the data may be found at `./data/featured-product-launches/date=2023-10-24`.
 
 - Explore part of the data using `pandas`, use:
 ```python
 import pandas as pd
 
 # replace the date part with your scraping date
-file = "./data/trending-products/date=2023-10-24/part-1.jsonl"
+# file = "./data/trending-products/date=2023-10-24/part-1.jsonl"
+file = "./data/featured-product-launches/date=2023-10-24/part-1.jsonl"
 df = pd.read_json(file, lines=True)
 
 df.info()
@@ -56,19 +53,76 @@ import glob
 import pandas as pd
 
 # replace the date part with your scraping date
-files = glob.glob("./data/trending-products/date=2023-10-24/*.jsonl")
+# files = glob.glob("./data/trending-products/date=2023-10-24/*.jsonl")
+files = glob.glob("./data/featured-product-launches/date=2023-10-24/*.jsonl")
 dfs = [pd.read_json(file, lines=True) for file in files]
 df = pd.concat(dfs, ignore_index=True)
 
 df.info()
 ```
 
-
-
-
 ## Contribute
 
 It will be nice, if you open an issue first so that we can know what is going on, then, fork this repo and push in your ideas. Do not forget to add a bit of test(s) of what value you adding.
+
+## Questions/Contacts
+
+lallyelias87@gmail.com, or open a GitHub issue
+
+
+## Schema
+
+### Launch
+
+The `featured-product-launches` spider extract the following ``launch`` fields from featured product launches pages:
+
+```python
+class Launch(BaseModel):
+    launch_id: str = None
+    launch_slug: str = None
+    launch_name: str = None
+    launch_tagline: str = None
+    launch_description: str = None
+    launch_url: HttpUrl = None
+    launch_votes_count: int = None
+    launch_comments_count: int = None
+    launch_daily_rank: int = None
+    launch_weekly_rank: int = None
+    launch_created_at: str = None
+    launch_featured_at: str = None
+    launch_updated_at: str = None
+    product_id: str = None
+    product_name: str = None
+    product_url: HttpUrl = None
+```
+
+### Product
+
+The `trending-products` spider extract the following ``product`` fields from trending product pages:
+
+```python
+class Product(BaseModel):
+    product_id: str = None
+    product_slug: str = None
+    product_name: str = None
+    product_tagline: str = None
+    product_description: str = None
+    product_url: HttpUrl = None
+    product_website_url: HttpUrl = None
+    product_rating: float = None
+    product_followers_count: int = None
+    product_total_votes_count: int = None
+    product_reviewers_count: int = None
+    product_reviews_count: int = None
+    product_posts_count: int = None
+    product_stacks_count: int = None
+    product_alternatives_count: int = None
+    product_tips_count: int = None
+    product_addons_count: int = None
+    product_platforms: List[str] = None
+    product_categories: List[str] = None
+    product_topics: List[str] = None
+```
 
 ## Licence
 

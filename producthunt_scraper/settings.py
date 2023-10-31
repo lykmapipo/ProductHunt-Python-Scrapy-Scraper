@@ -99,9 +99,9 @@ DOWNLOADER_MIDDLEWARES = {
 # Feed exports configurations
 # See https://docs.scrapy.org/en/latest/topics/feed-exports.html
 FEED_TEMPDIR = env("FEED_TEMPDIR", None)
-FEED_STORE_EMPTY = env("FEED_STORE_EMPTY", True, bool)
+FEED_STORE_EMPTY = env("FEED_STORE_EMPTY", False, bool)
 FEED_EXPORT_ENCODING = env("FEED_EXPORT_ENCODING", "utf-8", str)
-FEED_EXPORT_BATCH_ITEM_COUNT = env("FEED_EXPORT_BATCH_ITEM_COUNT", 0, int)
+FEED_EXPORT_BATCH_ITEM_COUNT = env("FEED_EXPORT_BATCH_ITEM_COUNT", 100, int)
 
 # Enable and configure HTTP caching (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
@@ -171,6 +171,7 @@ BASE_DATA_DIR = BASE_DIR / "data"
 
 PRODUCTHUNT_ALLOWED_DOMAINS = ["producthunt.com"]
 PRODUCTHUNT_BASE_URL = "https://www.producthunt.com"
+PRODUCTHUNT_POSTS_BASE_URL = f"""{PRODUCTHUNT_BASE_URL}/posts"""
 PRODUCTHUNT_TOPICS_BASE_URL = f"""{PRODUCTHUNT_BASE_URL}/topics"""
 PRODUCTHUNT_PRODUCTS_BASE_URL = f"""{PRODUCTHUNT_BASE_URL}/products"""
 PRODUCTHUNT_PRODUCT_SORT_FILTERS = [
