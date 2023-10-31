@@ -34,10 +34,10 @@ pip install -e .
 scrapy crawl trending-products
 ```
 
-## Data
+## Data Exploration
 The scraped data is saved in [`jsonline`](https://jsonlines.org/) format and may be found at `./data/<spider-name>/date=<scraped-date>`. Where `spider-name` is a name of the spider e.g `trending-products` and `scraped-date` is the date when the spider was runned.
 
-Example, for `trending-products` spider runned on `2023-10-24`, then the data may be found at `./data/trending-products/2023-10-24`.
+Example, for `trending-products` spider runned on `2023-10-24`, then the data may be found at `./data/trending-products/date=2023-10-24`.
 
 - Explore part of the data using `pandas`, use:
 ```python
