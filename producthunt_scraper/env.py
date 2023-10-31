@@ -2,6 +2,8 @@
 
 import os
 
+from distutils.util import strtobool
+
 from dotenv import find_dotenv, load_dotenv
 
 __all__ = ["env"]
@@ -10,7 +12,7 @@ __all__ = ["env"]
 load_dotenv(find_dotenv())
 
 
-def env(key, default=None, cast=None, transform=None):
+def env(key=None, default=None, cast=None, transform=None):
     """Get, transform and cast environment variable.
 
     Parameters
@@ -21,16 +23,16 @@ def env(key, default=None, cast=None, transform=None):
     default (*):
         Default value for variable.
 
-    cast (class):
-        Valid class to cast enviroment variable to.
+    cast (class or callable):
+        Valid ``class`` or ``callable`` to cast enviroment variable to.
 
     transform (callable):
-        Valid callable to apply on enviroment variable.
+        Valid ``callable`` to apply on enviroment variable.
 
     Returns
     -------
-    dict (dict):
-        Valid dict
+    value (*):
+        Valid environment value or default
 
     Examples
     --------
@@ -40,12 +42,14 @@ def env(key, default=None, cast=None, transform=None):
     True
     """
     value = os.environ.get(key)
+
     value = value if value else default
+    value = value.strip() if isinstance(value, str) else value
 
     if value and callable(transform):
         value = transform(value)
 
     if value and callable(cast):
-        value = cast(value)
+        value = bool(strtobool(value)) if cast == bool else cast(value)
 
     return value
