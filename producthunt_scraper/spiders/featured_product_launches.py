@@ -13,11 +13,11 @@ To scrape `featured product launches`, run:
 >>> scrapy crawl featured-product-launches
 """
 
-import json
 from datetime import datetime
 
 import scrapy
 
+from producthunt_scraper.spiders.mixins import PageScriptDataMixin
 from producthunt_scraper.settings import (
     BASE_DATA_DIR,
     PRODUCTHUNT_ALLOWED_DOMAINS,
@@ -27,7 +27,6 @@ from producthunt_scraper.settings import (
 
 # selectors
 FEATURED_LAUNCH_URL_SELECTOR = "div[data-test=homepage-section-0] div[data-test*=post-item] a[href*=posts]::attr(href)"
-FEATURED_LAUNCH_SCRIPT_DATA_SELECTOR = "script#__NEXT_DATA__::text"
 
 # mappings
 FEATURED_LAUNCH_DATA_MAPPINGS = {
@@ -47,7 +46,7 @@ FEATURED_LAUNCH_DATA_MAPPINGS = {
 }
 
 
-class FeaturedProductLaunchesSpider(scrapy.Spider):
+class FeaturedProductLaunchesSpider(scrapy.Spider, PageScriptDataMixin):
     """Scrape top featured product launches."""
 
     name = "featured-product-launches"
@@ -109,10 +108,7 @@ class FeaturedProductLaunchesSpider(scrapy.Spider):
         """Parse featured product launch page and yield a launch item."""
 
         # parse product launch raw data
-        raw_data = self.parse_featured_product_launch_data(
-            response=response,
-            **kwargs,
-        )
+        raw_data = self.parse_page_script_data(response=response, **kwargs)
 
         # collect, transform and format product launch data
         # from raw product launch data
@@ -140,16 +136,3 @@ class FeaturedProductLaunchesSpider(scrapy.Spider):
                 # TODO: collect and link extra data
 
                 yield data
-
-    def parse_featured_product_launch_data(self, response=None, **kwargs):
-        """Parse raw featured product launch data from a page script data."""
-
-        # parse data
-        data = response.css(FEATURED_LAUNCH_SCRIPT_DATA_SELECTOR)
-        data = data.get() or "{}"
-
-        # cast and select data
-        data = json.loads(data)
-        data = data.get("props", {}).get("apolloState", {})
-
-        return data

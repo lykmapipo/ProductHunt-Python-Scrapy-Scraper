@@ -5,7 +5,6 @@
 
 # useful for handling different item types with a single interface
 from importlib import import_module
-from itemadapter import ItemAdapter, is_item
 from scrapy import signals
 
 from scrapy.downloadermiddlewares.retry import RetryMiddleware

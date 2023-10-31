@@ -13,12 +13,12 @@ To scrape `trending products`, run:
 >>> scrapy crawl trending-products
 """
 
-import json
 from datetime import datetime
 from urllib.parse import urlencode
 
 import scrapy
 
+from producthunt_scraper.spiders.mixins import PageScriptDataMixin
 from producthunt_scraper.settings import (
     BASE_DATA_DIR,
     PRODUCTHUNT_ALLOWED_DOMAINS,
@@ -30,7 +30,6 @@ from producthunt_scraper.settings import (
 # selectors
 TRENDING_TOPIC_URL_SELECTOR = "div[data-test=trending-topics-card] a::attr(href)"
 TRENDING_PRODUCT_URL_SELECTOR = "main[class=layoutMain] ul > div > div > a::attr(href)"
-PRODUCT_SCRIPT_DATA_SELECTOR = "script#__NEXT_DATA__::text"
 
 # mappings
 PRODUCT_DATA_MAPPINGS = {
@@ -55,7 +54,7 @@ PRODUCT_DATA_MAPPINGS = {
 }
 
 
-class TrendingProductsSpider(scrapy.Spider):
+class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
     """Scrape top trending products from trending topics."""
 
     name = "trending-products"
@@ -134,7 +133,7 @@ class TrendingProductsSpider(scrapy.Spider):
 
     def parse_product_page(self, response=None, **kwargs):
         """Parse product page and yield a product item."""
-        raw_product = self.parse_product_data(response=response, **kwargs)
+        raw_product = self.parse_page_script_data(response=response, **kwargs)
         for key, value in raw_product.items():
             if "Product" in key and "structuredData" in value:
                 # parse basic product data
@@ -149,14 +148,6 @@ class TrendingProductsSpider(scrapy.Spider):
                 # yield product data
                 product = {**basic_data, **extra_data}
                 yield product
-
-    def parse_product_data(self, response=None, **kwargs):
-        """Parse raw product data from a product page script data."""
-        raw_product = response.css(PRODUCT_SCRIPT_DATA_SELECTOR).get() or "{}"
-        raw_product = json.loads(raw_product)
-        raw_product = raw_product.get("props", {})
-        raw_product = raw_product.get("apolloState", {})
-        return raw_product
 
     def _parse_product_basic_data(self, raw_base_product={}):
         """Parse product basic details from product script data."""
