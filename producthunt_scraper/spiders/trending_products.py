@@ -18,6 +18,8 @@ from urllib.parse import urlencode
 
 import scrapy
 
+from producthunt_scraper.items import ProductItem
+from producthunt_scraper.itemloaders import ProductItemLoader
 from producthunt_scraper.spiders.mixins import PageScriptDataMixin
 from producthunt_scraper.settings import (
     BASE_DATA_DIR,
@@ -147,7 +149,12 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
 
                 # yield product data
                 product = {**basic_data, **extra_data}
-                yield product
+
+                # load and yield an product item
+                item_loader = ProductItemLoader(item=ProductItem())
+                item_loader.add_value(None, product)
+                item = item_loader.load_item()
+                yield item
 
     def _parse_product_basic_data(self, raw_base_product={}):
         """Parse product basic details from product script data."""

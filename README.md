@@ -77,23 +77,24 @@ lallyelias87@gmail.com, or open a GitHub issue
 The `featured-product-launches` spider extract the following ``launch`` fields from featured product launches pages:
 
 ```python
-class Launch(BaseModel):
-    launch_id: str = None
-    launch_slug: str = None
-    launch_name: str = None
-    launch_tagline: str = None
-    launch_description: str = None
-    launch_url: HttpUrl = None
-    launch_votes_count: int = None
-    launch_comments_count: int = None
-    launch_daily_rank: int = None
-    launch_weekly_rank: int = None
-    launch_created_at: str = None
-    launch_featured_at: str = None
-    launch_updated_at: str = None
-    product_id: str = None
-    product_name: str = None
-    product_url: HttpUrl = None
+@dataclass
+class ProductLaunchItem:
+    launch_id: Optional[str] = field(default=None)
+    launch_slug: Optional[str] = field(default=None)
+    launch_name: Optional[str] = field(default=None)
+    launch_tagline: Optional[str] = field(default=None)
+    launch_description: Optional[str] = field(default=None)
+    launch_url: Optional[str] = field(default=None)
+    launch_votes_count: Optional[int] = field(default=None)
+    launch_comments_count: Optional[int] = field(default=None)
+    launch_daily_rank: Optional[int] = field(default=None)
+    launch_weekly_rank: Optional[int] = field(default=None)
+    launch_created_at: Optional[str] = field(default=None)
+    launch_featured_at: Optional[str] = field(default=None)
+    launch_updated_at: Optional[str] = field(default=None)
+    product_id: Optional[str] = field(default=None)
+    product_name: Optional[str] = field(default=None)
+    product_url: Optional[str] = field(default=None)
 ```
 
 ### Product
@@ -101,27 +102,28 @@ class Launch(BaseModel):
 The `trending-products` spider extract the following ``product`` fields from trending product pages:
 
 ```python
-class Product(BaseModel):
-    product_id: str = None
-    product_slug: str = None
-    product_name: str = None
-    product_tagline: str = None
-    product_description: str = None
-    product_url: HttpUrl = None
-    product_website_url: HttpUrl = None
-    product_rating: float = None
-    product_followers_count: int = None
-    product_total_votes_count: int = None
-    product_reviewers_count: int = None
-    product_reviews_count: int = None
-    product_posts_count: int = None
-    product_stacks_count: int = None
-    product_alternatives_count: int = None
-    product_tips_count: int = None
-    product_addons_count: int = None
-    product_platforms: List[str] = None
-    product_categories: List[str] = None
-    product_topics: List[str] = None
+@dataclass
+class ProductItem:
+    product_id: Optional[str] = field(default=None)
+    product_slug: Optional[str] = field(default=None)
+    product_name: Optional[str] = field(default=None)
+    product_tagline: Optional[str] = field(default=None)
+    product_description: Optional[str] = field(default=None)
+    product_url: Optional[str] = field(default=None)
+    product_website_url: Optional[str] = field(default=None)
+    product_rating: Optional[float] = field(default=None)
+    product_followers_count: Optional[int] = field(default=None)
+    product_total_votes_count: Optional[int] = field(default=None)
+    product_reviewers_count: Optional[int] = field(default=None)
+    product_reviews_count: Optional[int] = field(default=None)
+    product_posts_count: Optional[int] = field(default=None)
+    product_stacks_count: Optional[int] = field(default=None)
+    product_alternatives_count: Optional[int] = field(default=None)
+    product_tips_count: Optional[int] = field(default=None)
+    product_addons_count: Optional[int] = field(default=None)
+    product_platforms: Optional[List[str]] = field(default=None)
+    product_categories: Optional[List[str]] = field(default=None)
+    product_topics: Optional[List[str]] = field(default=None)
 ```
 
 ## Licence

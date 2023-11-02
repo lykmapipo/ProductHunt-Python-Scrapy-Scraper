@@ -17,6 +17,8 @@ from datetime import datetime
 
 import scrapy
 
+from producthunt_scraper.items import ProductLaunchItem
+from producthunt_scraper.itemloaders import ProductLaunchItemLoader
 from producthunt_scraper.spiders.mixins import PageScriptDataMixin
 from producthunt_scraper.settings import (
     BASE_DATA_DIR,
@@ -125,7 +127,8 @@ class FeaturedProductLaunchesSpider(scrapy.Spider, PageScriptDataMixin):
                 }
 
                 # collect and link product details
-                product_ref = raw_data_value.get("product", {})
+                # TODO: ensure launch with products
+                product_ref = raw_data_value.get("product") or {}
                 product_ref = product_ref.get("__ref", "").strip()
                 if product_ref:
                     product = raw_data.get(product_ref, {})
@@ -135,4 +138,8 @@ class FeaturedProductLaunchesSpider(scrapy.Spider, PageScriptDataMixin):
 
                 # TODO: collect and link extra data
 
-                yield data
+                # load and yield an product launch item
+                item_loader = ProductLaunchItemLoader(item=ProductLaunchItem())
+                item_loader.add_value(None, data)
+                item = item_loader.load_item()
+                yield item
