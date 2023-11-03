@@ -117,6 +117,7 @@ HTTPPROXY_ENABLED = env("HTTPPROXY_ENABLED", True, bool)
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     "producthunt_scraper.pipelines.ValidItemFilterPipeline": 300,
+    "producthunt_scraper.pipelines.DuplicateItemFilterPipeline": 400,
 }
 
 # Enable and configure logging

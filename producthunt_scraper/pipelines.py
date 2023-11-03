@@ -14,15 +14,43 @@ from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 
 
-__all__ = ["ValidItemFilterPipeline"]
+from producthunt_scraper.items import ProductItem
+
+
+__all__ = ["ValidItemFilterPipeline", "DuplicateItemFilterPipeline"]
 
 
 class ValidItemFilterPipeline:
+    """Valid item filter pipeline."""
+
     def process_item(self, item, spider):
-        """Verify and allow item which has all required fields."""
+        """Verify and drop item which does not have required fields."""
         adapter = ItemAdapter(item)
         product_url = adapter.get("product_url")
         if product_url:
             return item
         else:
             raise DropItem(f"""Invalid item found: {item!r}""")
+
+
+class DuplicateItemFilterPipeline:
+    """Duplicates item filter pipeline."""
+
+    def __init__(self):
+        self.ids_seen = set()
+
+    def process_item(self, item, spider):
+        """Check and drop duplicates item."""
+        adapter = ItemAdapter(item)
+
+        is_product = isinstance(item, ProductItem)
+        item_type = type(item).__name__
+
+        item_id = adapter.get("product_id") if is_product else adapter.get("launch_id")
+        item_id = f"""{item_type}/{item_id}"""
+
+        if item_id and item_id in self.ids_seen:
+            raise DropItem(f"Duplicate item found: {item!r}")
+        else:
+            self.ids_seen.add(item_id)
+            return item
