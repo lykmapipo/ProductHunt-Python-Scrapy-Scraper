@@ -48,6 +48,9 @@ FEATURED_LAUNCH_DATA_MAPPINGS = {
 }
 
 
+__all__ = ["FeaturedProductLaunchesSpider"]
+
+
 class FeaturedProductLaunchesSpider(scrapy.Spider, PageScriptDataMixin):
     """Scrape top featured product launches."""
 

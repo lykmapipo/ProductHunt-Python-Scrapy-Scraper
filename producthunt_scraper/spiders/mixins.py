@@ -5,6 +5,9 @@ import json
 DEFAULT_PAGE_SCRIPT_DATA_SELECTOR = "script#__NEXT_DATA__::text"
 
 
+__all__ = ["PageScriptDataMixin"]
+
+
 class PageScriptDataMixin:
     """Provide helpers to scrape page script data.
 

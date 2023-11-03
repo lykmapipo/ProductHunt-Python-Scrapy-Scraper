@@ -56,6 +56,9 @@ PRODUCT_DATA_MAPPINGS = {
 }
 
 
+__all__ = ["TrendingProductsSpider"]
+
+
 class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
     """Scrape top trending products from trending topics."""
 
