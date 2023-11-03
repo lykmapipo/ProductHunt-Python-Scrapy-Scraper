@@ -2,6 +2,11 @@
 
 Python [Scrapy](https://github.com/scrapy/scrapy) spiders that scrapes [products](#product) and [launches](#launch) data from [producthunt.com](https://www.producthunt.com).
 
+## Features
+- Item [schema](https://github.com/lykmapipo/ProductHunt-Python-Scrapy-Scraper/blob/main/producthunt_scraper/items.py) for `trending products` and `featured product launches` defined using `dataclass`
+- Item [pipelines](https://github.com/lykmapipo/ProductHunt-Python-Scrapy-Scraper/blob/main/producthunt_scraper/pipelines.py) to `normalize`, `validate` and `drop` duplicate items.
+- [Download middlewares](https://github.com/lykmapipo/ProductHunt-Python-Scrapy-Scraper/blob/main/producthunt_scraper/middlewares.py) to random user agents.
+
 ## Requirements
 
 - [Python 3.8+](https://www.python.org/)
