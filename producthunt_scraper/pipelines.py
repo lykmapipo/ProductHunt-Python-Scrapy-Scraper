@@ -17,7 +17,31 @@ from scrapy.exceptions import DropItem
 from producthunt_scraper.items import ProductItem
 
 
-__all__ = ["ValidItemFilterPipeline", "DuplicateItemFilterPipeline"]
+__all__ = [
+    "NormalizeItemPipeline",
+    "ValidItemFilterPipeline",
+    "DuplicateItemFilterPipeline",
+]
+
+
+class NormalizeItemPipeline:
+    """Normalize item pipeline."""
+
+    def process_item(self, item, spider):
+        """Restructure and reformat item."""
+        item_adapter = ItemAdapter(item)
+
+        is_product = isinstance(item, ProductItem)
+        if is_product:
+            product_categories = item_adapter.get("product_categories")
+            if not product_categories:
+                item_adapter["product_categories"] = None
+
+            product_topics = item_adapter.get("product_topics")
+            if not product_topics:
+                item_adapter["product_topics"] = None
+
+        return item
 
 
 class ValidItemFilterPipeline:
@@ -25,8 +49,8 @@ class ValidItemFilterPipeline:
 
     def process_item(self, item, spider):
         """Verify and drop item which does not have required fields."""
-        adapter = ItemAdapter(item)
-        product_url = adapter.get("product_url")
+        item_adapter = ItemAdapter(item)
+        product_url = item_adapter.get("product_url")
         if product_url:
             return item
         else:
@@ -34,19 +58,23 @@ class ValidItemFilterPipeline:
 
 
 class DuplicateItemFilterPipeline:
-    """Duplicates item filter pipeline."""
+    """Duplicate item filter pipeline."""
 
     def __init__(self):
         self.ids_seen = set()
 
     def process_item(self, item, spider):
         """Check and drop duplicates item."""
-        adapter = ItemAdapter(item)
+        item_adapter = ItemAdapter(item)
 
-        is_product = isinstance(item, ProductItem)
+        is_product_item = isinstance(item, ProductItem)
         item_type = type(item).__name__
 
-        item_id = adapter.get("product_id") if is_product else adapter.get("launch_id")
+        item_id = (
+            item_adapter.get("product_id")
+            if is_product_item
+            else item_adapter.get("launch_id")
+        )
         item_id = f"""{item_type}/{item_id}"""
 
         if item_id and item_id in self.ids_seen:
