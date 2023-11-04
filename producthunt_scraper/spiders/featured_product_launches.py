@@ -124,19 +124,23 @@ class FeaturedProductLaunchesSpider(scrapy.Spider, PageScriptDataMixin):
                 }
 
                 # collect and link product details
-                # TODO: ensure launch with products
-                product_ref = raw_data_value.get("product") or {}
-                product_ref = product_ref.get("__ref", "").strip()
-                if product_ref:
-                    product = raw_data.get(product_ref, {})
-                    data["product_id"] = product.get("id", None)
-                    data["product_name"] = product.get("name", None)
-                    data["product_url"] = product.get("url", None)
+                product_key = self.parse_ref_key(key="product", source=raw_data_value)
+                product = self.parse_ref_values(product_key, source=raw_data)
+                product = next(iter(product), {})
+                data["product_id"] = product.get("id", None)
+                data["product_name"] = product.get("name", None)
+                data["product_url"] = product.get("url", None)
 
-                # TODO: collect and link extra data
+                # collect and link topics
+                topic_keys = self.parse_ref_keys(key="topics", source=raw_data_value)
+                topics = self.parse_ref_values(*topic_keys, source=raw_data)
+                topics = {topic.get("name") for topic in topics}
+                topics = {topic for topic in topics if topic}
+                data["launch_topics"] = list(topics)
 
                 # load and yield an product launch item
                 item_loader = ProductLaunchItemLoader(item=ProductLaunchItem())
                 item_loader.add_value(None, data)
                 item = item_loader.load_item()
+
                 yield item

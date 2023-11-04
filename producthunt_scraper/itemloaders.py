@@ -42,3 +42,5 @@ class ProductLaunchItemLoader(ItemLoader):
     launch_comments_count_in = MapCompose(int)
     launch_daily_rank_in = MapCompose(int)
     launch_weekly_rank_in = MapCompose(int)
+
+    launch_topics_out = Identity()

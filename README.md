@@ -97,6 +97,7 @@ class ProductLaunchItem:
     launch_created_at: Optional[str] = field(default=None)
     launch_featured_at: Optional[str] = field(default=None)
     launch_updated_at: Optional[str] = field(default=None)
+    launch_topics: Optional[List[str]] = field(default=None)
     product_id: Optional[str] = field(default=None)
     product_name: Optional[str] = field(default=None)
     product_url: Optional[str] = field(default=None)

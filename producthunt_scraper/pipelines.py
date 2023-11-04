@@ -13,7 +13,7 @@
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 
-from producthunt_scraper.items import ProductItem
+from producthunt_scraper.items import ProductItem, ProductLaunchItem
 
 __all__ = [
     "NormalizeItemPipeline",
@@ -29,8 +29,9 @@ class NormalizeItemPipeline:
         """Restructure and reformat item."""
         item_adapter = ItemAdapter(item)
 
-        is_product = isinstance(item, ProductItem)
-        if is_product:
+        is_product_launch_item = isinstance(item, ProductLaunchItem)
+        is_product_item = isinstance(item, ProductItem)
+        if is_product_item:
             product_categories = item_adapter.get("product_categories")
             if not product_categories:
                 item_adapter["product_categories"] = None
@@ -38,6 +39,11 @@ class NormalizeItemPipeline:
             product_topics = item_adapter.get("product_topics")
             if not product_topics:
                 item_adapter["product_topics"] = None
+
+        if is_product_launch_item:
+            launch_topics = item_adapter.get("launch_topics")
+            if not launch_topics:
+                item_adapter["launch_topics"] = None
 
         return item
 
