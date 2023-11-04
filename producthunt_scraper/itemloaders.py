@@ -4,10 +4,8 @@
 # https://docs.scrapy.org/en/latest/topics/loaders.html
 
 
-from itemloaders.processors import TakeFirst, MapCompose, Identity
-
+from itemloaders.processors import Identity, MapCompose, TakeFirst
 from scrapy.loader import ItemLoader
-
 
 __all__ = ["ProductItemLoader", "ProductLaunchItemLoader"]
 

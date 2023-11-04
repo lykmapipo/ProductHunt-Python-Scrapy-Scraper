@@ -17,15 +17,15 @@ from datetime import datetime
 
 import scrapy
 
-from producthunt_scraper.items import ProductLaunchItem
 from producthunt_scraper.itemloaders import ProductLaunchItemLoader
-from producthunt_scraper.spiders.mixins import PageScriptDataMixin
+from producthunt_scraper.items import ProductLaunchItem
 from producthunt_scraper.settings import (
     BASE_DATA_DIR,
     PRODUCTHUNT_ALLOWED_DOMAINS,
-    PRODUCTHUNT_POSTS_BASE_URL,
     PRODUCTHUNT_BASE_URL,
+    PRODUCTHUNT_POSTS_BASE_URL,
 )
+from producthunt_scraper.spiders.mixins import PageScriptDataMixin
 
 # selectors
 FEATURED_LAUNCH_URL_SELECTOR = "div[data-test=homepage-section-0] div[data-test*=post-item] a[href*=posts]::attr(href)"
@@ -56,18 +56,8 @@ class FeaturedProductLaunchesSpider(scrapy.Spider, PageScriptDataMixin):
 
     name = "featured-product-launches"
     allowed_domains = PRODUCTHUNT_ALLOWED_DOMAINS
-
     data_dir = BASE_DATA_DIR
     last_scraped_date = datetime.utcnow().date()
-
-    custom_settings = {
-        "FEEDS": {
-            "%(data_dir)s/%(name)s/date=%(last_scraped_date)s/part-%(batch_id)d.jsonl": {
-                "format": "jsonlines",
-                "overwrite": True,
-            }
-        },
-    }
 
     def __init__(self, *args, **kwargs):
         super(FeaturedProductLaunchesSpider, self).__init__(*args, **kwargs)
@@ -81,7 +71,6 @@ class FeaturedProductLaunchesSpider(scrapy.Spider, PageScriptDataMixin):
 
     def parse(self, response=None, **kwargs):
         """Process responses and return scraped data and/or more URLs to follow."""
-
         # check url type
         response_url = str(response.url)
         is_base_url = response_url == PRODUCTHUNT_BASE_URL
@@ -107,7 +96,6 @@ class FeaturedProductLaunchesSpider(scrapy.Spider, PageScriptDataMixin):
 
     def parse_featured_product_launches_page(self, response=None, **kwargs):
         """Parse producthunt home page and follow featured product launch urls."""
-
         # parse featured product launch urls
         urls = response.css(FEATURED_LAUNCH_URL_SELECTOR)
         urls = set(urls.getall())
@@ -118,7 +106,6 @@ class FeaturedProductLaunchesSpider(scrapy.Spider, PageScriptDataMixin):
 
     def parse_featured_product_launch_page(self, response=None, **kwargs):
         """Parse featured product launch page and yield a launch item."""
-
         # parse product launch raw data
         raw_data = self.parse_page_script_data(response=response, **kwargs)
 

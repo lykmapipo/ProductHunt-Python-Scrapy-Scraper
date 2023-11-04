@@ -18,9 +18,8 @@ from urllib.parse import urlencode
 
 import scrapy
 
-from producthunt_scraper.items import ProductItem
 from producthunt_scraper.itemloaders import ProductItemLoader
-from producthunt_scraper.spiders.mixins import PageScriptDataMixin
+from producthunt_scraper.items import ProductItem
 from producthunt_scraper.settings import (
     BASE_DATA_DIR,
     PRODUCTHUNT_ALLOWED_DOMAINS,
@@ -28,6 +27,7 @@ from producthunt_scraper.settings import (
     PRODUCTHUNT_PRODUCTS_BASE_URL,
     PRODUCTHUNT_TOPICS_BASE_URL,
 )
+from producthunt_scraper.spiders.mixins import PageScriptDataMixin
 
 # selectors
 TRENDING_TOPIC_URL_SELECTOR = "div[data-test=trending-topics-card] a::attr(href)"
@@ -64,20 +64,8 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
 
     name = "trending-products"
     allowed_domains = PRODUCTHUNT_ALLOWED_DOMAINS
-
     data_dir = BASE_DATA_DIR
     last_scraped_date = datetime.utcnow().date()
-
-    custom_settings = {
-        "FEEDS": {
-            "%(data_dir)s/%(name)s/date=%(last_scraped_date)s/part-%(batch_id)d.jsonl": {
-                "format": "jsonlines",
-                "overwrite": True,
-                "store_empty": False,
-                "batch_item_count": 100,
-            }
-        },
-    }
 
     def __init__(self, *args, **kwargs):
         super(TrendingProductsSpider, self).__init__(*args, **kwargs)
@@ -91,7 +79,6 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
 
     def parse(self, response=None, **kwargs):
         """Process response and return scraped data and/or more URLs to follow."""
-
         # check url type
         response_url = str(response.url)
         is_topic_url = response_url.startswith(PRODUCTHUNT_TOPICS_BASE_URL)
@@ -119,7 +106,6 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
 
     def parse_topics_page(self, response=None, **kwargs):
         """Parse main topics page and yield trending topics pages urls."""
-
         # parse trending topic urls from topics page
         trending_topic_urls = response.css(TRENDING_TOPIC_URL_SELECTOR)
         trending_topic_urls = set(trending_topic_urls.getall())
@@ -134,7 +120,6 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
 
     def parse_topic_page(self, response=None, **kwargs):
         """Parse topic page and yield trending products urls."""
-
         # parse product urls from topic page
         product_urls = response.css(TRENDING_PRODUCT_URL_SELECTOR)
         product_urls = set(product_urls.getall())
@@ -166,8 +151,9 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
                 item = item_loader.load_item()
                 yield item
 
-    def _parse_product_basic_data(self, raw_base_product={}):
+    def _parse_product_basic_data(self, raw_base_product=None):
         """Parse product basic details from product script data."""
+        raw_base_product = raw_base_product or {}
         product_basic_data = {}
 
         for basic_key, data_key in PRODUCT_DATA_MAPPINGS.items():
@@ -176,8 +162,10 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
 
         return product_basic_data
 
-    def _parse_product_extra_data(self, raw_base_product={}, raw_product={}):
+    def _parse_product_extra_data(self, raw_base_product=None, raw_product=None):
         """Parse product extra details from product script data."""
+        raw_base_product = raw_base_product or {}
+        raw_product = raw_product or {}
         product_categories = []
         product_topics = []
 
@@ -200,7 +188,7 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
                     for category in categories
                     if category
                 ]
-                product_categories = list(set(v for v in categories if v))
+                product_categories = list({v for v in categories if v})
 
             # parse product topics
             if "topics" in key:
@@ -212,7 +200,7 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
                 ]
                 topics = [raw_product.get(topic, None) for topic in topics if topic]
                 topics = [topic.get("name", None) for topic in topics if topic]
-                product_topics = list(set(v for v in topics if v))
+                product_topics = list({v for v in topics if v})
 
         return {
             "product_categories": product_categories,

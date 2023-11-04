@@ -5,12 +5,11 @@
 
 # useful for handling different item types with a single interface
 from importlib import import_module
-from scrapy import signals
-
-from scrapy.downloadermiddlewares.retry import RetryMiddleware
-from scrapy.utils.response import response_status_message
 
 from fake_useragent import FakeUserAgent
+from scrapy import signals
+from scrapy.downloadermiddlewares.retry import RetryMiddleware
+from scrapy.utils.response import response_status_message
 
 __all__ = ["RandomUserAgentMiddleware", "RetryRandomUserAgentMiddleware"]
 

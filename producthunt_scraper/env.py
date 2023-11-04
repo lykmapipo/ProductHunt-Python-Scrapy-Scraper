@@ -1,7 +1,6 @@
 """Parse and load environment variables."""
 
 import os
-
 from distutils.util import strtobool
 
 from dotenv import find_dotenv, load_dotenv

@@ -97,6 +97,12 @@ EXTENSIONS = {
 
 # Feed exports configurations
 # See https://docs.scrapy.org/en/latest/topics/feed-exports.html
+FEEDS = {
+    "%(data_dir)s/%(name)s/date=%(last_scraped_date)s/part-%(batch_id)d.jsonl": {
+        "format": "jsonlines",
+        "overwrite": True,
+    }
+}
 FEED_TEMPDIR = env("FEED_TEMPDIR", None)
 FEED_STORE_EMPTY = env("FEED_STORE_EMPTY", False, bool)
 FEED_EXPORT_ENCODING = env("FEED_EXPORT_ENCODING", "utf-8", str)

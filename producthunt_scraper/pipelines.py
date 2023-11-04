@@ -13,9 +13,7 @@
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 
-
 from producthunt_scraper.items import ProductItem
-
 
 __all__ = [
     "NormalizeItemPipeline",
