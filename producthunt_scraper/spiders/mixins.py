@@ -16,7 +16,7 @@ class PageScriptDataMixin:
         * parse references from page script data
     """
 
-    def parse_page_script_data(self, response=None, selector=None, **kwargs):
+    def parse_script_data(self, response=None, selector=None, **kwargs):
         """Parse page script data.
 
         Parameters

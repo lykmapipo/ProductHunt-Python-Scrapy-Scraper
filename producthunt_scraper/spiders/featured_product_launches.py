@@ -107,7 +107,7 @@ class FeaturedProductLaunchesSpider(scrapy.Spider, PageScriptDataMixin):
     def parse_featured_product_launch_page(self, response=None, **kwargs):
         """Parse featured product launch page and yield a launch item."""
         # parse product launch raw data
-        raw_data = self.parse_page_script_data(response=response, **kwargs)
+        raw_data = self.parse_script_data(response=response, **kwargs)
 
         # collect, transform and format product launch data
         # from raw product launch data

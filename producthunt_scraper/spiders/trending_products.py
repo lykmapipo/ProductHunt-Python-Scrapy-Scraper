@@ -130,7 +130,7 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
 
     def parse_product_page(self, response=None, **kwargs):
         """Parse product page and yield a product item."""
-        raw_product = self.parse_page_script_data(response=response, **kwargs)
+        raw_product = self.parse_script_data(response=response, **kwargs)
         for key, value in raw_product.items():
             if "Product" in key and "structuredData" in value:
                 # parse basic product data
