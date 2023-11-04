@@ -166,43 +166,20 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
         """Parse product extra details from product script data."""
         raw_base_product = raw_base_product or {}
         raw_product = raw_product or {}
-        product_categories = []
-        product_topics = []
 
-        for key, value in raw_base_product.items():
-            # parse product categories
-            if "categories" in key:
-                categories = value or []
-                categories = [
-                    category.get("__ref", None)
-                    for category in categories
-                    if "__ref" in category
-                ]
-                categories = [
-                    raw_product.get(category, None)
-                    for category in categories
-                    if category
-                ]
-                categories = [
-                    category.get("displayName", category.get("name", None))
-                    for category in categories
-                    if category
-                ]
-                product_categories = list({v for v in categories if v})
+        # parse product topics
+        topic_keys = self.parse_ref_keys(key="topics", source=raw_base_product)
+        topics = self.parse_ref_values(*topic_keys, source=raw_product)
+        topics = {topic.get("name") for topic in topics}
+        topics = list({topic for topic in topics if topic})
 
-            # parse product topics
-            if "topics" in key:
-                topics = (value or {}).get("edges", [])
-                topics = [
-                    topic.get("node", {}).get("__ref", None)
-                    for topic in topics
-                    if topic
-                ]
-                topics = [raw_product.get(topic, None) for topic in topics if topic]
-                topics = [topic.get("name", None) for topic in topics if topic]
-                product_topics = list({v for v in topics if v})
+        # parse product categories
+        category_keys = self.parse_ref_keys(key="categories", source=raw_base_product)
+        categories = self.parse_ref_values(*category_keys, source=raw_product)
+        categories = {category.get("name") for category in categories}
+        categories = list({category for category in categories if category})
 
         return {
-            "product_categories": product_categories,
-            "product_topics": product_topics,
+            "product_categories": categories,
+            "product_topics": topics,
         }
