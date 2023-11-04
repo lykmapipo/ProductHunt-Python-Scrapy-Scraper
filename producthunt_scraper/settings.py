@@ -68,7 +68,7 @@ DEFAULT_REQUEST_HEADERS = {
     "Accept": env(
         "ACCEPT", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", str
     ),
-    "Accept-Language": env("ACCEPT_LANGUAGE", "en", str),
+    "Accept-Language": env("ACCEPT_LANGUAGE", "en-US,en;q=0.9", str),
 }
 
 # The maximum depth that will be allowed to crawl for any site. If zero, no limit will be imposed.
@@ -78,7 +78,7 @@ DEPTH_LIMIT = env("DEPTH_LIMIT", 0, int)
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = env("DOWNLOAD_DELAY", 0, int)
+DOWNLOAD_DELAY = env("DOWNLOAD_DELAY", 0, float)
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
@@ -87,14 +87,13 @@ DOWNLOADER_MIDDLEWARES = {
     "scrapy.downloadermiddlewares.retry.RetryMiddleware": None,
     "producthunt_scraper.middlewares.RandomUserAgentMiddleware": 500,
     "producthunt_scraper.middlewares.RetryRandomUserAgentMiddleware": 550,
-    # "producthunt_scraper.middlewares.ProducthuntScraperDownloaderMiddleware": 543,
 }
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
-# EXTENSIONS = {
-#    "scrapy.extensions.telnet.TelnetConsole": None,
-# }
+EXTENSIONS = {
+    "scrapy.extensions.telnet.TelnetConsole": None,
+}
 
 # Feed exports configurations
 # See https://docs.scrapy.org/en/latest/topics/feed-exports.html
@@ -158,10 +157,6 @@ USER_AGENT = env(
     f"""Scrapy/{import_module("scrapy").__version__} (+https://scrapy.org)""",
     str,
 )
-
-# Disable Telnet Console (enabled by default)
-# See https://docs.scrapy.org/en/latest/topics/settings.html#telnetconsole-enabled
-TELNETCONSOLE_ENABLED = env("TELNETCONSOLE_ENABLED", True, bool)
 
 # Set settings whose default value is deprecated to a future-proof value
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
