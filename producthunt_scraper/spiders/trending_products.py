@@ -64,7 +64,6 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
 
     name = "trending-products"
     allowed_domains = PRODUCTHUNT_ALLOWED_DOMAINS
-    start_urls = [PRODUCTHUNT_TOPICS_BASE_URL]
 
     data_dir = BASE_DATA_DIR
     last_scraped_date = datetime.utcnow().date()
@@ -84,7 +83,15 @@ class TrendingProductsSpider(scrapy.Spider, PageScriptDataMixin):
         super(TrendingProductsSpider, self).__init__(*args, **kwargs)
         self.last_scraped_date = datetime.utcnow().date()
 
-    def parse(self, response, **kwargs):
+    def start_requests(self):
+        """Generate first requests to crawl for this spider."""
+        start_urls = [PRODUCTHUNT_TOPICS_BASE_URL]
+        for start_url in start_urls:
+            yield scrapy.Request(url=start_url, callback=self.parse, meta={})
+
+    def parse(self, response=None, **kwargs):
+        """Process response and return scraped data and/or more URLs to follow."""
+
         # check url type
         response_url = str(response.url)
         is_topic_url = response_url.startswith(PRODUCTHUNT_TOPICS_BASE_URL)

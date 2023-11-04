@@ -53,7 +53,6 @@ dependencies = [
   "python-dotenv>=1.0.0",
 ]
 
-
 [project.urls]
 Homepage = "https://github.com/lykmapipo/ProductHunt-Python-Scrapy-Scraper"
 Documentation = "https://github.com/lykmapipo/ProductHunt-Python-Scrapy-Scraper"
@@ -69,6 +68,9 @@ line-length = 88
 profile = "black"
 line_length = 88
 known_first_party = ["producthunt_scraper"]
+
+[tool.pydocstyle]
+convention = "numpy"
 
 # Build system metadata.
 [tool.setuptools]
